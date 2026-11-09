@@ -86,10 +86,11 @@ RECAPTCHA_SITE_KEY = os.getenv("RECAPTCHA_SITE_KEY")
 # MIDDLEWARE
 # --------------------------------------------------
 
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -97,6 +98,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 
 
 # --------------------------------------------------
@@ -257,18 +259,30 @@ EMAIL_TIMEOUT = 30
 
 if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
     raise ValueError("Gmail credentials are missing from environment variables")
+
+# --------------------------------------------------
+# CORS CONFIGURATION
+# --------------------------------------------------
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+
+    # Production frontend
+    "https://cloud-clash-three.vercel.app",
 ]
-CORS_ALLOWED_ORIGINS = [
+
+CORS_ALLOW_CREDENTIALS = True
+
+# --------------------------------------------------
+# CSRF CONFIGURATION
+# --------------------------------------------------
+
+CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://your-frontend.vercel.app",
+    "https://cloud-clash-three.vercel.app",
 ]
-CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = [
-    "https://your-frontend.vercel.app",
-]
+
