@@ -2,41 +2,31 @@
 import logging
 import secrets
 import uuid
-from django.contrib.auth import authenticate
-import requests
-from django.db import transaction
-from django.db.models.deletion import ProtectedError
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-from .permissions import IsSuperUser
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import User
-from django.core.mail import send_mail
-from django.db import transaction
+from django.db import IntegrityError, transaction
+from django.db.models.deletion import ProtectedError
 from django.utils import timezone
 from django.utils.text import slugify
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from .permissions import IsSuperUser
+
+import requests
+
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.views import APIView
 
 from .models import StudentProfile, EmailOTP, PendingRegistration
 from .serializers import RegisterSerializer
 
 from qr.services import send_student_qr_email
-
-from django.contrib.auth.hashers import make_password, check_password
-from django.db import IntegrityError
-from rest_framework.throttling import (
-    AnonRateThrottle,
-    UserRateThrottle,
-)
 
 from .throttles import (
     LoginRateThrottle,
@@ -44,6 +34,10 @@ from .throttles import (
     RegisterRateThrottle,
     ResendOTPThrottle,
     DeleteRegistrationThrottle,
+)
+from .services import (
+    send_pending_registration_otp,
+    send_student_otp,
 )
 
 
@@ -102,45 +96,6 @@ def verify_recaptcha(captcha_token):
 def generate_otp():
 
     return str(secrets.randbelow(900000) + 100000)
-
-
-# --------------------------------------------------
-# SEND OTP EMAIL
-# --------------------------------------------------
-
-def send_student_otp(user, name, otp):
-
-    return send_mail(
-        subject="AWS Event - Email Verification",
-
-        message=(
-            f"Hello {name},\n\n"
-            f"Your OTP is {otp}.\n\n"
-            "Your OTP expires in 5 minutes.\n\n"
-            "AWS Event Team"
-        ),
-
-        from_email=settings.DEFAULT_FROM_EMAIL,
-
-        recipient_list=[user.email],
-
-        fail_silently=False
-    )
-
-def send_pending_registration_otp(email, name, otp):
-
-    return send_mail(
-        subject="AWS Event - Email Verification",
-        message=(
-            f"Hello {name},\n\n"
-            f"Your OTP is {otp}.\n\n"
-            "Your OTP expires in 5 minutes.\n\n"
-            "AWS Event Team"
-        ),
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[email],
-        fail_silently=False
-    )
 
 
 # --------------------------------------------------
