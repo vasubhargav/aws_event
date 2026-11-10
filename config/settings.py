@@ -288,9 +288,9 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://your-frontend.vercel.app",
+    "https://cloud-clash-three.vercel.app/",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
-    "https://your-frontend.vercel.app",
+    "https://cloud-clash-three.vercel.app/",
 ]
