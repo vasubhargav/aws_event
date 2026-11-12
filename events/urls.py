@@ -1,3 +1,4 @@
+
 from django.urls import path
 
 from .views import (
@@ -7,6 +8,7 @@ from .views import (
     ManualAttendanceView,
     AttendanceListView,
     AttendanceSummaryView,
+    AttendanceDashboardView,
 )
 
 urlpatterns = [
@@ -48,5 +50,12 @@ urlpatterns = [
         "summary/",
         AttendanceSummaryView.as_view(),
         name="attendance-summary"
+    ),
+
+    # Complete attendance dashboard
+    path(
+        "dashboard/",
+        AttendanceDashboardView.as_view(),
+        name="attendance-dashboard"
     ),
 ]
